@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Crime Reporter</string>
+ 
+    <string name="tvLocation">Welcome!</string>
+    <string name="tvLocation2">Your current location is</string>
+    <string name="btnRefresh">Get Current Location</string>
+    <string name="tvDescription">Here are the crimes reported in your area:</string>
+    <string name="btnForm">Report a crime</string>
+
     <string name="report_a_crime">Report A Crime</string>
     <string name="name">Name</string>
     <string name="title">Title</string>
@@ -13,4 +20,5 @@
     <string name="time_of_crime">Time of Crime</string>
     <string name="resolved">Resolved</string>
     <string name="submit">Submit</string>
+ 
 </resources>
