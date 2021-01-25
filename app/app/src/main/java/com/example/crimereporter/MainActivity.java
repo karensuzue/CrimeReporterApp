@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,7 +17,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnForm= findViewById(R.id.btnForm);
-        Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
-        startActivity(toForm);
+        btnForm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
+                startActivity(toForm);
+            }
+        });
+
     }
+
+
 }
