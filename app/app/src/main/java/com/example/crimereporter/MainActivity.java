@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+
+
 public class MainActivity extends AppCompatActivity {
     TextView tvLocation, tvDescription, temp;
     Button btnRefresh, btnForm;
@@ -27,10 +33,13 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> descriptions;
 
 
+    Button btnForm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         tvLocation = findViewById(R.id.tvLocation);
         tvDescription = findViewById(R.id.tvDescription);
@@ -103,5 +112,10 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
         alert.show();
+
+        btnForm= findViewById(R.id.btnForm);
+        Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
+        startActivity(toForm);
+
     }
 }
