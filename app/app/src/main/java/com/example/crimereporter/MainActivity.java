@@ -19,9 +19,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import android.provider.Settings;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,8 +36,11 @@ public class MainActivity extends AppCompatActivity {
     double longitude, latitude;
     ArrayList<String> descriptions;
 
+//    FirebaseDatabase database= FirebaseDatabase.getInstance();
+//    DatabaseReference databaseReference= database.getReference();
 
-    Button btnForm;
+
+//    Button btnForm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

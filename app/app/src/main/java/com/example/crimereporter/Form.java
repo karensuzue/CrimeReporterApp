@@ -11,6 +11,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Form extends AppCompatActivity {
 
     EditText etTitle;
@@ -19,13 +23,20 @@ public class Form extends AppCompatActivity {
     RadioButton rbPropertyCrime;
     RadioButton rbDrugActivity;
     RadioButton rbTrafficViolation;
-   // RadioButton rb;
     Button btnSubmit;
 
     EditText etDescription;
     EditText etTime;
     CheckBox cbResolved;
     boolean resolved;
+    String title;
+    RadioButton rb;
+    String typeOfCrime;
+    String description;
+    String time;
+
+    FirebaseDatabase database= FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference= database.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +55,8 @@ public class Form extends AppCompatActivity {
         btnSubmit=findViewById(R.id.btnSubmit);
 
 
+
+
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,27 +64,27 @@ public class Form extends AppCompatActivity {
                 if(etTitle.getText().toString().isEmpty()){
                     Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
                 }else{
-                    String title=etTitle.getText().toString().trim();
+                    title=etTitle.getText().toString().trim();
                 }
 
                 if(rgGroup.getCheckedRadioButtonId()==-1){
                     Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
                 }else{
-                    int id=rgGroup.getCheckedRadioButtonId();
-                    RadioButton rb= findViewById(rgGroup.getCheckedRadioButtonId());
-                    String typeOfCrime=rb.getText().toString().trim();
+                  //  int id=rgGroup.getCheckedRadioButtonId();
+                    rb= findViewById(rgGroup.getCheckedRadioButtonId());
+                    typeOfCrime=rb.getText().toString().trim();
                 }
 
                 if(etDescription.getText().toString().isEmpty()){
                     Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
                 }else{
-                    String description=etDescription.getText().toString().trim();
+                    description=etDescription.getText().toString().trim();
                 }
 
                 if(etTime.getText().toString().isEmpty()){
                     Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
                 }else{
-                    String time=etTime.getText().toString().trim();
+                    time=etTime.getText().toString().trim();
                 }
 
                 if(!cbResolved.isChecked()){
@@ -80,12 +93,85 @@ public class Form extends AppCompatActivity {
                     resolved=true;
                 }
 
+
+//
+
+                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
+                databaseReference.child(time).setValue(report);
+
+//                DatabaseReference myRef= database.getReference();
+//                myRef=myRef.child(time);
+//
+//
+
                 //need to send data to entry in ListView
 
             }
         });
 
 
+
+
+    }
+
+    public class CrimeReport{
+        String title;
+        String typeOfCrime;
+        String description;
+        String time;
+        boolean resolved;
+
+        public CrimeReport(){
+
+        }
+
+        public CrimeReport(String title, String typeOfCrime, String description, String time, boolean resolved){
+            this.title=title;
+            this.typeOfCrime=typeOfCrime;
+            this.description=description;
+            this.time=time;
+            this.resolved=resolved;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getTypeOfCrime() {
+            return typeOfCrime;
+        }
+
+        public void setTypeOfCrime(String typeOfCrime) {
+            this.typeOfCrime = typeOfCrime;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
+        public boolean isResolved() {
+            return resolved;
+        }
+
+        public void setResolved(boolean resolved) {
+            this.resolved = resolved;
+        }
     }
 
 
