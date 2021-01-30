@@ -39,6 +39,21 @@ public class MainActivity extends AppCompatActivity {
 
         tvDescription.setVisibility(View.GONE);
 
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String s1 = Double.toString(longitude);
+                String s2 = Double.toString(latitude);
+                tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
+                tvDescription.setVisibility(View.VISIBLE);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
 
@@ -63,19 +78,7 @@ public class MainActivity extends AppCompatActivity {
             showAlertDialog();
         }
 
-
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String s1 = Double.toString(longitude);
-                String s2 = Double.toString(latitude);
-                tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
-                tvDescription.setVisibility(View.VISIBLE);
-
-            }
-        });
     }
-
 
     public void showAlertDialog() {
         AlertDialog.Builder builder =  new AlertDialog.Builder(MainActivity.this);
