@@ -17,6 +17,7 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +54,7 @@ public class MainActivity extends AppCompatActivity {
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //call checkpermission if its true proceed
-                //then call initlocation thing
-                checkPermission();
-
+                initLocation();
                 String s1 = Double.toString(longitude);
                 String s2 = Double.toString(latitude);
                 tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
@@ -83,8 +82,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initLocation();
+    }*/
 
-    public void showRationale() {
+    /*public void showRationale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Request location");
         builder.setMessage("GPS is disabled. In order to use the application, " +
@@ -103,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
         alert.show();
-    }
+    }*/
 
 
     public void initLocation() {
@@ -128,38 +133,54 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST);
+        }*/
+        /*try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,
+                    10, listener);
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,
-                10, listener);
+        catch (SecurityException e) {
+            showRationale();
+        }*/
 
+        if (checkPermission()) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,
+                    10, listener);
+        }
     }
 
-    public void checkPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            //Permission not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                showRationale();
+
+    public boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                //Permission not granted
+                /*if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    showRationale();
+                }*/
+
+                //else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            LOCATION_PERMISSION_REQUEST);
+                //}
+
+                return false;
             }
 
             else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST);
+                Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT)
+                        .show();
+
+                return true;
             }
         }
-
-        else {
-            Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT)
-                    .show();
-            initLocation();
-        }
+        return false;
     }
 
 
@@ -171,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
             //If request is not cancelled aka result array is not empty
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-                initLocation();
             }
             else {
                 Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
