@@ -19,23 +19,38 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     TextView tvLocation, tvDescription, temp;
     Button btnRefresh, btnForm;
 
-    private double longitude = 0, latitude = 0;
-    //private GpsStatus status;
+    private double longitude = -34.44076, latitude = -58.70521;
+    private String result = "";
+    private RequestQueue requestQueue;
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
 
@@ -54,30 +69,15 @@ public class MainActivity extends AppCompatActivity {
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initLocation();
-                String s1 = Double.toString(longitude);
-                String s2 = Double.toString(latitude);
-                tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
+                //initLocation();
+                getAddress();
+                String s = "You're at " + result + ". Here are the crimes in your area:";
+                tvDescription.setText(s);
                 tvDescription.setVisibility(View.VISIBLE);
-
-                /*String locality;
-
-                final Geocoder geocoder = new Geocoder(v.getContext());
-                try {
-                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude,
-                            1);
-                    for (Address address : addresses) {
-                        if (address.getLocality() != null) {
-                            locality = address.getLocality();
-                            tvLocation.setText(locality);
-                        }
-                    }
-
-                    tvDescription.setVisibility(View.VISIBLE);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-
+                //String s1 = Double.toString(longitude);
+                //String s2 = Double.toString(latitude);
+                //tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
+                //tvDescription.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -110,8 +110,56 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }*/
 
+    /*public String getAddress(Location location, Handler handler) {
+        Thread thread = new Thread();
+        String result = "";
 
-    public void initLocation() {
+        final Geocoder geocoder = new Geocoder(this,
+                Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude,
+                    1);
+            Address address = addresses.get(0);
+            result = address.getAddressLine(0) + " " + address.getLocality();
+            Log.d("mylog", "Complete address", result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }*/
+
+    public void getAddress() {
+        String url = "https://nominatim.openstreetmap.org/reverse?lat=" + latitude + "&lon=" +
+                longitude + "&format=jsonv2";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray keys = response.names();
+                            for (int i = 0; i < keys.length(); i++) {
+                                String key = keys.getString(i);
+                                if (key == "display_name") {
+                                    result = response.getString(key);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(request);
+    }
+
+
+    public Location initLocation() {
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
 
@@ -133,24 +181,12 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST);
-        }*/
-        /*try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,
-                    10, listener);
-        }
-        catch (SecurityException e) {
-            showRationale();
-        }*/
-
         if (checkPermission()) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,
                     10, listener);
         }
+
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
 
@@ -158,18 +194,9 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
-                //Permission not granted
-                /*if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    showRationale();
-                }*/
-
-                //else {
-                    ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                             LOCATION_PERMISSION_REQUEST);
-                //}
-
                 return false;
             }
 
