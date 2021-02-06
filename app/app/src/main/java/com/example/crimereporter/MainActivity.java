@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     TextView tvLocation, tvDescription, temp;
     Button btnRefresh, btnForm;
 
-    private double longitude = -34.44076, latitude = -58.70521;
+    //private double longitude = -34.44076, latitude = -58.70521;
+    private double longitude = 0, latitude = 0;
     private String result = "";
     private RequestQueue requestQueue;
 
@@ -69,66 +70,18 @@ public class MainActivity extends AppCompatActivity {
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //initLocation();
-                getAddress();
-                String s = "You're at " + result + ". Here are the crimes in your area:";
-                tvDescription.setText(s);
-                tvDescription.setVisibility(View.VISIBLE);
-                //String s1 = Double.toString(longitude);
-                //String s2 = Double.toString(latitude);
-                //tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
+                initLocation();
+                //getAddress();
+                //String s = "You're at " + result + ". Here are the crimes in your area:";
+                //tvDescription.setText(s);
                 //tvDescription.setVisibility(View.VISIBLE);
+                String s1 = Double.toString(longitude);
+                String s2 = Double.toString(latitude);
+                tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
+                tvDescription.setVisibility(View.VISIBLE);
             }
         });
     }
-
-    /*
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initLocation();
-    }*/
-
-    /*public void showRationale() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Request location");
-        builder.setMessage("GPS is disabled. In order to use the application, " +
-                "you need to enable your GPS.");
-        builder.setCancelable(true);
-
-        //Alert Dialog: OK button
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST);
-            }
-        });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-    }*/
-
-    /*public String getAddress(Location location, Handler handler) {
-        Thread thread = new Thread();
-        String result = "";
-
-        final Geocoder geocoder = new Geocoder(this,
-                Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude,
-                    1);
-            Address address = addresses.get(0);
-            result = address.getAddressLine(0) + " " + address.getLocality();
-            Log.d("mylog", "Complete address", result);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }*/
 
     public void getAddress() {
         String url = "https://nominatim.openstreetmap.org/reverse?lat=" + latitude + "&lon=" +
