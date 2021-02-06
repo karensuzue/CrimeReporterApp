@@ -11,9 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -43,6 +41,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import android.provider.Settings;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     TextView tvLocation, tvDescription, temp;
@@ -54,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
+    ArrayList<String> descriptions;
+
+//    FirebaseDatabase database= FirebaseDatabase.getInstance();
+//    DatabaseReference databaseReference= database.getReference();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
                 String s2 = Double.toString(latitude);
                 tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
                 tvDescription.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnForm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
+                startActivity(toForm);
             }
         });
     }
@@ -163,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -178,4 +196,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }
