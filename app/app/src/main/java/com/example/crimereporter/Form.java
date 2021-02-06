@@ -35,8 +35,9 @@ public class Form extends AppCompatActivity {
     String description;
     String time;
 
-    FirebaseDatabase database= FirebaseDatabase.getInstance();
+    FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
     DatabaseReference databaseReference= database.getReference();
+    //"https://console.firebase.google.com/project/crime-reporter-8e0ac/overview"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +96,10 @@ public class Form extends AppCompatActivity {
 
 
 //
-
                 CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
-                databaseReference.child(time).setValue(report);
+                //databaseReference.child("test1").setValue("val");
+                databaseReference.child(title).setValue(report);
+//                databaseReference
 
 //                DatabaseReference myRef= database.getReference();
 //                myRef=myRef.child(time);

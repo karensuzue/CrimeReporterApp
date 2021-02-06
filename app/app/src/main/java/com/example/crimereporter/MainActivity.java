@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     double longitude, latitude;
     ArrayList<String> descriptions;
+
 
 //    FirebaseDatabase database= FirebaseDatabase.getInstance();
 //    DatabaseReference databaseReference= database.getReference();
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        FirebaseApp.initializeApp(this);
         tvLocation = findViewById(R.id.tvLocation);
         tvDescription = findViewById(R.id.tvDescription);
         btnRefresh = findViewById(R.id.btnRefresh);
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
 
-        btnForm= findViewById(R.id.btnForm);
+
         btnForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

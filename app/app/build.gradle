@@ -43,3 +43,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.android.gms:play-services-location:17.1.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
