@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     private double longitude = -34.44076, latitude = -58.70521;
     private String result = "";
-    private RequestQueue requestQueue;
+    private RequestQueue requestQueue = new RequestQueue();
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
 
