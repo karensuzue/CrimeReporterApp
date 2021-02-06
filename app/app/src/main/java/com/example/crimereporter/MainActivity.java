@@ -47,6 +47,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -57,10 +58,11 @@ public class MainActivity extends AppCompatActivity {
     //private double longitude = -34.44076, latitude = -58.70521;
     private double longitude = 0, latitude = 0;
     private String result = "";
-    private RequestQueue requestQueue;
+    //private RequestQueue requestQueue;
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
     ArrayList<String> descriptions;
+
 
 //    FirebaseDatabase database= FirebaseDatabase.getInstance();
 //    DatabaseReference databaseReference= database.getReference();
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseApp.initializeApp(this);
 
         tvLocation = findViewById(R.id.tvLocation);
         tvDescription = findViewById(R.id.tvDescription);
@@ -96,13 +100,13 @@ public class MainActivity extends AppCompatActivity {
         btnForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
+                Intent toForm = new Intent(MainActivity.this, com.example.crimereporter.Form.class);
                 startActivity(toForm);
             }
         });
     }
 
-    public void getAddress() {
+    /*public void getAddress() {
         String url = "https://nominatim.openstreetmap.org/reverse?lat=" + latitude + "&lon=" +
                 longitude + "&format=jsonv2";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -128,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         requestQueue.add(request);
-    }
+    }*/
 
 
     public Location initLocation() {
@@ -190,12 +194,9 @@ public class MainActivity extends AppCompatActivity {
             //If request is not cancelled aka result array is not empty
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-
 }
