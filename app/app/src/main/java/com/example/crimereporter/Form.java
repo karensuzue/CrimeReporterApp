@@ -35,6 +35,9 @@ public class Form extends AppCompatActivity {
     String description;
     String time;
 
+    double longitude = MainActivity.longitude;
+    double latitude = MainActivity.latitude;
+
     FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
     DatabaseReference databaseReference= database.getReference();
     //"https://console.firebase.google.com/project/crime-reporter-8e0ac/overview"
@@ -89,14 +92,14 @@ public class Form extends AppCompatActivity {
                 }
 
                 if(!cbResolved.isChecked()){
-                    Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
+                    resolved=false;
                 }else{
                     resolved=true;
                 }
 
 
 //
-                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
+                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,longitude,latitude,resolved);
                 //databaseReference.child("test1").setValue("val");
                 databaseReference.child(title).setValue(report);
 //                databaseReference
@@ -122,16 +125,15 @@ public class Form extends AppCompatActivity {
         String description;
         String time;
         boolean resolved;
+        double longitude, latitude;
 
-        public CrimeReport(){
-
-        }
-
-        public CrimeReport(String title, String typeOfCrime, String description, String time, boolean resolved){
+        public CrimeReport(String title, String typeOfCrime, String description, String time, double longitude, double latitude, boolean resolved){
             this.title=title;
             this.typeOfCrime=typeOfCrime;
             this.description=description;
             this.time=time;
+            this.longitude = longitude;
+            this.latitude = latitude;
             this.resolved=resolved;
         }
 
@@ -174,6 +176,9 @@ public class Form extends AppCompatActivity {
         public void setResolved(boolean resolved) {
             this.resolved = resolved;
         }
+
+        public double getLongitude() { return longitude; }
+        public double getLatitude() { return latitude; }
     }
 
 
