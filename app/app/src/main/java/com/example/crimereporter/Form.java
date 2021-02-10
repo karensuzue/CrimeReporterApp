@@ -37,7 +37,8 @@ public class Form extends AppCompatActivity {
     String longitude;
     String latitude;
 
-    double longitude = 0.0, latitude = 0.0;
+//    double longitude;
+//    double latitude;
     String locName;
 
     //"https://console.firebase.google.com/project/crime-reporter-8e0ac/overview"
@@ -66,9 +67,9 @@ public class Form extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                longitude = MainActivity.longitude;
-                latitude = MainActivity.latitude;
-                locName = MainActivity.locName;
+//                longitude = MainActivity.longitude;
+//                latitude = MainActivity.latitude;
+//                locName = MainActivity.locName;
 
                 if(etTitle.getText().toString().isEmpty()){
                     Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
@@ -107,16 +108,17 @@ public class Form extends AppCompatActivity {
 //
                 CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved,longitude,latitude);
 
-                Location location = new Location(longitude, latitude, locName);
+                //Location location = new Location(longitude, latitude, locName);
                 FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
-                DatabaseReference locationNode = database.getReference(locName);
-                locationNode.setValue(location);
+                DatabaseReference databaseReference= database.getReference();
+                //DatabaseReference locationNode = database.getReference(locName);
+                //locationNode.setValue(location);
 
-                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
-                locationNode.child(title).updateChildValues(report);
+                //CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
+               // locationNode.child(title).updateChildValues(report);
 
                 //databaseReference.child("test1").setValue("val");
-                //databaseReference.child(title).setValue(report);
+                databaseReference.child(title).setValue(report);
 //                databaseReference
 
 //                DatabaseReference myRef= database.getReference();

@@ -70,12 +70,21 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
 
         tvDescription.setVisibility(View.GONE);
         lvList.setVisibility(View.GONE);
+        
 
-        btnForm.setOnClickListener(new View.OnClickListener() {
+        btnForm.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
+            public void onClick (View v){
+                //pass through longitude and longitude
                 Intent toForm = new Intent(MainActivity.this, com.example.crimereporter.Form.class);
+                toForm.putExtra("longitude", Double.toString(longitude));
+                toForm.putExtra("latitude", Double.toString(latitude));
+
+//                System.out.println("longitude: "+longitude);
+//                System.out.println("latitude: "+latitude);
                 startActivity(toForm);
+
+
             }
         });
 
@@ -123,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
         });
     }
 
+
+
     public void initLocation() {
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
@@ -160,25 +171,10 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            LOCATION_PERMISSION_REQUEST);
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST);
                 return false;
-            }
-
-
-        btnForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //pass through longitude and longitude
-                Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
-                toForm.putExtra("longitude",Double.toString(longitude));
-                toForm.putExtra("latitude",Double.toString(latitude));
-
-//                System.out.println("longitude: "+longitude);
-//                System.out.println("latitude: "+latitude);
-                startActivity(toForm);
-
-            else {
+            } else {
                 Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT)
                         .show();
 
@@ -189,22 +185,33 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
         return false;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST) {
-            //If request is not cancelled aka result array is not empty
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+
+
+
+
+            @Override
+            public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                   @NonNull int[] grantResults) {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                if (requestCode == LOCATION_PERMISSION_REQUEST) {
+                    //If request is not cancelled aka result array is not empty
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
-        }
-    }
 
     @Override
     public void onItemSelected(int index) {
 
     }
-}
+
+//    @Override
+//    public void onItemSelected(int index) {
+//
+//    }
+//}
+
+        }
