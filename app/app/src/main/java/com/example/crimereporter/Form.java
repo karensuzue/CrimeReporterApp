@@ -37,8 +37,9 @@ public class Form extends AppCompatActivity {
     String longitude;
     String latitude;
 
-    FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
-    DatabaseReference databaseReference= database.getReference();
+    double longitude = 0.0, latitude = 0.0;
+    String locName;
+
     //"https://console.firebase.google.com/project/crime-reporter-8e0ac/overview"
 
     @Override
@@ -65,6 +66,9 @@ public class Form extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                longitude = MainActivity.longitude;
+                latitude = MainActivity.latitude;
+                locName = MainActivity.locName;
 
                 if(etTitle.getText().toString().isEmpty()){
                     Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
@@ -93,16 +97,26 @@ public class Form extends AppCompatActivity {
                 }
 
                 if(!cbResolved.isChecked()){
-                    Toast.makeText(Form.this,"Please Enter All fields!",Toast.LENGTH_SHORT).show();
+                    resolved=false;
                 }else{
                     resolved=true;
                 }
 
 
+
 //
                 CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved,longitude,latitude);
+
+                Location location = new Location(longitude, latitude, locName);
+                FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
+                DatabaseReference locationNode = database.getReference(locName);
+                locationNode.setValue(location);
+
+                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
+                locationNode.child(title).updateChildValues(report);
+
                 //databaseReference.child("test1").setValue("val");
-                databaseReference.child(title).setValue(report);
+                //databaseReference.child(title).setValue(report);
 //                databaseReference
 
 //                DatabaseReference myRef= database.getReference();
@@ -120,7 +134,50 @@ public class Form extends AppCompatActivity {
 
     }
 
-    public class CrimeReport{
+    public static class Location {
+        double longitude, latitude;
+        String name;
+
+        public Location() {
+        }
+
+        public Location(double longitude, double latitude, String name) {
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.name = name;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setLongitude(double longitude) {
+            this.longitude = longitude;
+        }
+
+        public void setLatitude(double latitude) {
+            this.latitude = latitude;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /*public void addReport(String title, String typeOfCrime, String description, String time, boolean resolved) {
+            CrimeReport report = new CrimeReport(title, typeOfCrime, description, time, resolved);
+            databaseReference.child(title).setValue(report);
+        }*/
+    }
+
+    public class CrimeReport {
         String title;
         String typeOfCrime;
         String description;
@@ -129,8 +186,7 @@ public class Form extends AppCompatActivity {
         String latitude;
         String longitude;
 
-        public CrimeReport(){
-
+        public CrimeReport() {
         }
 
         public CrimeReport(String title, String typeOfCrime, String description, String time, boolean resolved,String longitude, String latitude){
