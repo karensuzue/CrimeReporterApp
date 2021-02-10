@@ -16,25 +16,35 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements List.ItemSelected {
     TextView tvLocation, tvDescription;
     Button btnRefresh, btnForm;
+    ListView lvList;
+    Form.Location location;
 
     //private double longitude = -34.44076, latitude = -58.70521;
-    public static double longitude = 0, latitude = 0;
+    public static double longitude = 0.0, latitude = 0.0;
+    public static String locName = "LocationName"; //if reverse Geocoder works this would change
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
 
-    FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
-    DatabaseReference databaseReference= database.getReference();
+    ArrayList<Form.Location> list;
+    ArrayAdapter<Form.Location> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +52,41 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
-
+        location = new Form.Location(longitude, latitude, locName);
         tvLocation = findViewById(R.id.tvLocation);
         tvDescription = findViewById(R.id.tvDescription);
         btnForm = findViewById(R.id.btnForm);
+        lvList = findViewById(R.id.lvList);
 
         tvDescription.setVisibility(View.GONE);
+        lvList.setVisibility(View.GONE);
 
         btnForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent toForm = new Intent(MainActivity.this, com.example.crimereporter.Form.class);
                 startActivity(toForm);
+            }
+        });
+
+        FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
+        DatabaseReference databaseReference= database.getReference();
+        list = new ArrayList<>();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()) {
+                    location = ds.getValue(Form.Location.class);
+                    list.add(location);
+                }
+
+                lvList.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -74,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 String s2 = Double.toString(latitude);
                 tvDescription.setText("Longitude: " + s1 + ", Latitude: " + s2);
                 tvDescription.setVisibility(View.VISIBLE);
+                lvList.setVisibility(View.VISIBLE);
+                //update the list fragment
             }
         });
     }
@@ -142,5 +177,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onItemSelected(int index) {
+
     }
 }
