@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     TextView tvLocation, tvDescription, temp;
     Button btnRefresh, btnForm;
 
-    double longitude, latitude;
+    double longitude;
+    double latitude;
     ArrayList<String> descriptions;
 
 
@@ -126,7 +127,13 @@ public class MainActivity extends AppCompatActivity {
         btnForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //pass through longitude and longitude
                 Intent toForm= new Intent(MainActivity.this, com.example.crimereporter.Form.class);
+                toForm.putExtra("longitude",Double.toString(longitude));
+                toForm.putExtra("latitude",Double.toString(latitude));
+
+//                System.out.println("longitude: "+longitude);
+//                System.out.println("latitude: "+latitude);
                 startActivity(toForm);
             }
         });

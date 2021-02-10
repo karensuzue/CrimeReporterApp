@@ -34,6 +34,8 @@ public class Form extends AppCompatActivity {
     String typeOfCrime;
     String description;
     String time;
+    String longitude;
+    String latitude;
 
     FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
     DatabaseReference databaseReference= database.getReference();
@@ -54,6 +56,8 @@ public class Form extends AppCompatActivity {
         etTime=findViewById(R.id.etTime);
         cbResolved=findViewById(R.id.cbResolved);
         btnSubmit=findViewById(R.id.btnSubmit);
+        longitude=getIntent().getStringExtra("longitude");
+        latitude=getIntent().getStringExtra("latitude");
 
 
 
@@ -96,7 +100,7 @@ public class Form extends AppCompatActivity {
 
 
 //
-                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved);
+                CrimeReport report= new CrimeReport(title,typeOfCrime,description,time,resolved,longitude,latitude);
                 //databaseReference.child("test1").setValue("val");
                 databaseReference.child(title).setValue(report);
 //                databaseReference
@@ -122,17 +126,21 @@ public class Form extends AppCompatActivity {
         String description;
         String time;
         boolean resolved;
+        String latitude;
+        String longitude;
 
         public CrimeReport(){
 
         }
 
-        public CrimeReport(String title, String typeOfCrime, String description, String time, boolean resolved){
+        public CrimeReport(String title, String typeOfCrime, String description, String time, boolean resolved,String longitude, String latitude){
             this.title=title;
             this.typeOfCrime=typeOfCrime;
             this.description=description;
             this.time=time;
             this.resolved=resolved;
+            this.longitude=longitude;
+            this.latitude=latitude;
         }
 
         public String getTitle() {
@@ -174,6 +182,23 @@ public class Form extends AppCompatActivity {
         public void setResolved(boolean resolved) {
             this.resolved = resolved;
         }
+
+        public String getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(String latitude) {
+            this.latitude = latitude;
+        }
+
+        public String getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(String longitude) {
+            this.longitude = longitude;
+        }
+
     }
 
 
