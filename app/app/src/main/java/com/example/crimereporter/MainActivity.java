@@ -68,27 +68,6 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
                 startActivity(toForm);
             }
         });
-
-        FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
-        DatabaseReference databaseReference= database.getReference();
-        list = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()) {
-                    location = ds.getValue(Form.Location.class);
-                    list.add(location);
-                }
-
-                lvList.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     @Override
