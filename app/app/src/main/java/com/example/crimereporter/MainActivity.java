@@ -37,19 +37,9 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
     ListView lvList;
     Form.Location location;
 
-
-    // double longitude;
-    // double latitude;
-    ArrayList<String> descriptions;
-
-
-//    FirebaseDatabase database= FirebaseDatabase.getInstance();
-//    DatabaseReference databaseReference= database.getReference();
-
     //private double longitude = -34.44076, latitude = -58.70521;
     public static double longitude = 0.0, latitude = 0.0;
     public static String locName = "LocationName"; //if reverse Geocoder works this would change
-
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
 
@@ -70,42 +60,12 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
 
         tvDescription.setVisibility(View.GONE);
         lvList.setVisibility(View.GONE);
-        
 
-        btnForm.setOnClickListener(new View.OnClickListener(){
+        btnForm.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View v){
-                //pass through longitude and longitude
+            public void onClick(View v) {
                 Intent toForm = new Intent(MainActivity.this, com.example.crimereporter.Form.class);
-                toForm.putExtra("longitude", Double.toString(longitude));
-                toForm.putExtra("latitude", Double.toString(latitude));
-
-//                System.out.println("longitude: "+longitude);
-//                System.out.println("latitude: "+latitude);
                 startActivity(toForm);
-
-
-            }
-        });
-
-        FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
-        DatabaseReference databaseReference= database.getReference();
-        list = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()) {
-                    location = ds.getValue(Form.Location.class);
-                    list.add(location);
-                }
-
-                lvList.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
@@ -131,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
             }
         });
     }
-
-
 
     public void initLocation() {
         LocationManager locationManager = (LocationManager)
@@ -174,44 +132,34 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
                 return false;
-            } else {
+            }
+
+            else {
                 Toast.makeText(this, "Permission already granted.", Toast.LENGTH_SHORT)
                         .show();
 
                 return true;
-
             }
         }
         return false;
     }
 
-
-
-
-
-            @Override
-            public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                                   @NonNull int[] grantResults) {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                if (requestCode == LOCATION_PERMISSION_REQUEST) {
-                    //If request is not cancelled aka result array is not empty
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
-                    }
-                }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            //If request is not cancelled aka result array is not empty
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
 
     @Override
     public void onItemSelected(int index) {
 
     }
-
-//    @Override
-//    public void onItemSelected(int index) {
-//
-//    }
-//}
-
-        }
+}
