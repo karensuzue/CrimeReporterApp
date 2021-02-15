@@ -98,9 +98,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        adapter = new CustomAdapter(this, list);
         //adapter = new ArrayAdapter<Display>(this, R.layout.item_display, list);
+        adapter = new CustomAdapter(this, list);
         lvList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
         DatabaseReference ref = database.getReference();
 
@@ -108,14 +109,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
-                    Map<String, String> map = (Map<String, String>) ds.getValue();
-                    String title = map.get("title");
-                    String time = map.get("time");
-                    String type = map.get("typeOfCrime");
-                    String description = map.get("description");
-                    Display entry = new Display(title, time, type, description);
-                    adapter.add(entry);
+                    Map<String, Object> map = (Map<String, Object>) ds.getValue();
+                    Double long_map = 0.0, lat_map = 0.0;
+                    if (map.get("longitude") instanceof Double) {
+                        long_map = ((Double) map.get("longitude")).doubleValue();
+                    }
 
+                    if (map.get("latitude") instanceof Double) {
+                        lat_map = ((Double) map.get("latitude")).doubleValue();
+                    }
+
+                    if (long_map == longitude && lat_map == latitude) {
+                        String title = (String) map.get("title");
+                        String time = (String) map.get("time");
+                        String type = (String) map.get("typeOfCrime");
+                        String description = (String) map.get("description");
+                        Display entry = new Display(title, time, type, description);
+                        adapter.add(entry);
+                    }
                 }
             }
 
