@@ -1,6 +1,7 @@
 package com.example.crimereporter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -15,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,8 +33,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements List.ItemSelected {
+public class MainActivity extends AppCompatActivity {
     TextView tvLocation, tvDescription;
     Button btnRefresh, btnForm;
     ListView lvList;
@@ -43,8 +47,9 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
 
     public static int LOCATION_PERMISSION_REQUEST = 100;
 
-    ArrayList<Form.Location> list;
-    ArrayAdapter<Form.Location> adapter;
+    ArrayList<Display> list = new ArrayList<Display>();
+    CustomAdapter adapter;
+    //ArrayAdapter<Display> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +61,9 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
         tvLocation = findViewById(R.id.tvLocation);
         tvDescription = findViewById(R.id.tvDescription);
         btnForm = findViewById(R.id.btnForm);
-        lvList = findViewById(R.id.lvList);
+        //lvList = findViewById(R.id.lvList);
 
         tvDescription.setVisibility(View.GONE);
-        lvList.setVisibility(View.GONE);
 
         btnForm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,10 +78,13 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
     protected void onStart() {
         super.onStart();
         btnRefresh = findViewById(R.id.btnRefresh);
+        lvList = findViewById(R.id.lvList);
+
         initLocation();
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //getAddress();
                 //String s = "You're at " + result + ". Here are the crimes in your area:";
                 //tvDescription.setText(s);
@@ -90,7 +97,35 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
                 //update the list fragment
             }
         });
+
+        adapter = new CustomAdapter(this, list);
+        //adapter = new ArrayAdapter<Display>(this, R.layout.item_display, list);
+        lvList.setAdapter(adapter);
+        FirebaseDatabase database= FirebaseDatabase.getInstance("https://crime-reporter-8e0ac-default-rtdb.firebaseio.com/");
+        DatabaseReference ref = database.getReference();
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()) {
+                    Map<String, String> map = (Map<String, String>) ds.getValue();
+                    String title = map.get("title");
+                    String time = map.get("time");
+                    String type = map.get("typeOfCrime");
+                    String description = map.get("description");
+                    Display entry = new Display(title, time, type, description);
+                    adapter.add(entry);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                System.out.println("Database read failed " + error.getCode());
+            }
+        });
     }
+
 
     public void initLocation() {
         LocationManager locationManager = (LocationManager)
@@ -117,9 +152,9 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
         if (checkPermission()) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,
                     10, listener);
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
+            //Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            //longitude = location.getLongitude();
+            //latitude = location.getLatitude();
         }
     }
 
@@ -156,10 +191,5 @@ public class MainActivity extends AppCompatActivity implements List.ItemSelected
                 Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    @Override
-    public void onItemSelected(int index) {
-
     }
 }
