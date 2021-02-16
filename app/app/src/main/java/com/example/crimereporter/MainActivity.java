@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                list.clear();
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     Map<String, Object> map = (Map<String, Object>) ds.getValue();
                     Double long_map = 0.0, lat_map = 0.0;
